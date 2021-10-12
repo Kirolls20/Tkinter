@@ -1,19 +1,21 @@
+# Imports 
 from tkinter import *
 from tkinter import filedialog
 from tkinter import font
 from tkinter import colorchooser
 from tkinter import messagebox
+
 root = Tk()
 root.title('Text Editor')
 root.geometry('1200x750')
 # Set Default Value for file path
 global file_path
 file_path = False
-# Create New File Function
+# Set  Default Value For Selected Text
 global selected
 selected =False
 
-
+# Create New File Function
 def new_file():
     global file_path
     file_path = False
@@ -21,10 +23,9 @@ def new_file():
     root.title('New File-Notepad')
     status_bar.config(text='New File      ')
 
-
 # Create Open File Function
 def open_file():
-    global counter
+    global counter  # Counter to count how many words in the file
     counter = 0
     txt_box.delete(1.0, END)
     # ask for File
@@ -43,8 +44,6 @@ def open_file():
     status_bar.config(text=f'{counter} words      ')
 
 # Create Save as Function
-
-
 def save_as():
     save_file = filedialog.asksaveasfilename(defaultextension='.*', title='Save File', initialdir='g:/', filetypes=(
         ('text file', '*.txt'), ('python files', '*.py'), ('all files', '*.*')))
@@ -53,12 +52,9 @@ def save_as():
     txt_box.delete(1.0, END)
     status_bar.config(text=f'Saved: {save_file}      ')
 
-# save exisisted file in the same location
-
-
+# save exisisted file in the same location and if it was new ask for the direction
 def save_file():
     if file_path:
-
         file_txt = open(file_path, 'w')
         file_txt = file_txt.write(txt_box.get(1.0, END))
         txt_box.delete(1.0, END)
@@ -67,8 +63,7 @@ def save_file():
         save_as()
 
 
-# //////////////////////////////////////////////////////*/////////////////////Edit Menu
-
+# ///////////////////////////////////////////////////////////////////////////Edit Menu
 # Cut text Fuction 
 def cut_text(e):
   global selected
@@ -104,27 +99,20 @@ def paste_text(e):
     position = txt_box.index(INSERT)
     txt_box.insert(position,selected)
 
-
 # Disabled Word Wrap Function
 def wrap_off():
   global wrap_off_btn
   wrap_off_btn['state'] = 'disabled'
   x_scroll= Scrollbar(main_frame,orient='horizontal')
   x_scroll.pack(side=BOTTOM,fill=X)
-
   txt_box.config(wrap='none',xscrollcommand=x_scroll.set)
   x_scroll.configure(command=txt_box.xview)
   edit_menu.entryconfig('Word Wrap', state='normal')
-    
-# ENabled Word Wrap Function 
+# ENabled Word Wrap Function  
 def wrap_on():
   wrap_off_btn['state'] = 'normal'
   txt_box.config(wrap='word')
   edit_menu.entryconfig('Word Wrap', state='disabled')
-
-  
-
-
 
 # ///////////////////////////////////////////////////////Colors Menu
 # Change the background theme Function
@@ -157,8 +145,6 @@ def selected_txt_color():
       txt_box.tag_add('colored', 'sel.first', 'sel.last')   
   else:
     messagebox.showerror('Erorr', 'Choose Text First!')
-    
-   
 # //////////////////////////////////////////////////////Options Menu Functions
 #** Night Mood OFF Function
 def night_off():
@@ -206,8 +192,7 @@ def night_on():
   color_menu.config(bg=second_color)
   option_menu.config(bg=second_color)
 
-
-# Bold The Text Function
+# Bold The Text Button Function
 def bold_it():
     # Create the font
     bold_font = font.Font(txt_box, txt_box.cget('font'))
@@ -222,8 +207,6 @@ def bold_it():
     else:
         txt_box.tag_add('bold', 'sel.first', 'sel.last')
     
-
-
 # Italic The Text Function
 def italic_it():
     italic_font = font.Font(txt_box, txt_box.cget('font'))
@@ -237,35 +220,28 @@ def italic_it():
     else:
         txt_box.tag_add('italic', 'sel.first', 'sel.last')
 
-
 # Create Tool bar frame
 tool_bar_frame = Frame(root)
 tool_bar_frame.pack(fill=X,pady=5)
-
 # Create Bold Button
 bold_btn = Button(tool_bar_frame, text='Bold', font=('Comic Sans MS', 8), command=bold_it)
 bold_btn.grid(row=0, column=0, sticky=W, padx=5)
-
 # Create Italic Button
 italic_btn = Button(tool_bar_frame, text='Italic', font=('Comic Sans MS', 8), command=italic_it)
 italic_btn.grid(row=0, column=1, padx=5)
 # Create Wrap Off Button
 wrap_off_btn = Button(tool_bar_frame, text='Wrap Off',font=('Comic Sans MS', 8),command=wrap_off)
 wrap_off_btn.grid(row=0, column=4, padx=5)
-
 # Change Selected Color Text Button
 change_sel_color_btn = Button(tool_bar_frame, text='Change Selected text Color', font=('Comic Sans MS', 8), command=selected_txt_color)
 change_sel_color_btn.grid(row=0,column=5,pady=5)
-
 # Create main Frame
 main_frame = Frame(root)
 main_frame.pack()
 # Set Scroll bar
 scroll = Scrollbar(main_frame)
 scroll.pack(side=RIGHT, fill=Y)
-
 # Create Text Box Erea and set yscrollcommand for that
-
 txt_box = Text(main_frame, font=('Hevatica', 18), selectbackground='yellow',selectforeground='black', undo=True, width=105, height=24, yscrollcommand=scroll.set)
 txt_box.pack(pady=5)
 # Configure the scroll bar
@@ -282,7 +258,7 @@ redo_btn = Button(tool_bar_frame, text='Redo', font=(
     'Comic Sans MS', 8), command=txt_box.edit_redo)
 redo_btn.grid(row=0, column=3, padx=5)
 
-# create Minu bar
+# create Menu bar
 my_menu = Menu(root)
 root.config(menu=my_menu)
 # Create File menu
@@ -292,10 +268,8 @@ file_menu.add_command(label='New', command=new_file)
 file_menu.add_command(label='Open', command=open_file)
 file_menu.add_command(label='Save', command=save_file)
 file_menu.add_command(label='Save as', command=save_as)
-
 file_menu.add_separator()
 file_menu.add_command(label='Exit', command=root.quit)
-
 # Create Edit Menu
 edit_menu = Menu(my_menu, tearoff=False)
 my_menu.add_cascade(label='Edit', menu=edit_menu)
@@ -307,7 +281,6 @@ edit_menu.add_command(label='Undo', accelerator=('Ctrl-Z'), command=txt_box.edit
 edit_menu.add_command(label='Redo', accelerator=('Ctrl-Y'), command=txt_box.edit_redo)
 edit_menu.add_separator()
 edit_menu.add_command(label='Word Wrap', accelerator=('ON'),command=wrap_on)
-
 # Make a theme menu
 color_menu = Menu(my_menu, tearoff=False)
 my_menu.add_cascade(label='Colors', menu=color_menu)
